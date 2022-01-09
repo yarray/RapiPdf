@@ -28,11 +28,14 @@
   "main": "./src/rapipdf.js",
   "module": "./src/rapipdf.js",
   "dependencies": {
+    "commander": "^8.3.0",
     "html-to-pdfmake": "^2.0.2",
+    "jsdom": "^19.0.0",
     "marked": "^0.8.2",
     "pdfmake": "^0.1.65",
     "swagger-client": "^3.10.0",
-    "swagger2openapi": "^5.4.0"
+    "swagger2openapi": "^5.4.0",
+    "yaml": "^1.10.2"
   },
   "scripts": {
     "build": "cross-env NODE_ENV='production' webpack",
@@ -63,6 +66,7 @@
     "webpack": "^4.42.1",
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-node-externals": "^3.0.0"
   }
 }

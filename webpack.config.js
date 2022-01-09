@@ -6,7 +6,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const { DuplicatesPlugin } = require('inspectpack/plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
+const { web } = require('webpack');
 const VERSION = JSON.stringify(require('./package.json').version).replace(/"/g, '');
+const nodeExternals = require('webpack-node-externals');
 
 const BANNER = `RapiPdf ${VERSION.replace()} - WebComponent to generate PDF from OpenAPI spec
 License: MIT
@@ -38,8 +40,7 @@ if (process.env.NODE_ENV === 'production') {
   commonPlugins.push(new DuplicatesPlugin({ emitErrors: false, verbose: true }));
 }
 
-
-module.exports = {
+const webConfig = {
   entry: './src/index.js',
   node: { fs: 'empty' },
   externals: {
@@ -116,3 +117,41 @@ module.exports = {
   },
   plugins: commonPlugins,
 };
+
+const cliConfig = {
+  entry: './src/rapipdf-cli.js',
+  target: 'node',
+  externals: [nodeExternals()],
+  optimization: { minimize: false },
+  devtool: 'cheap-module-source-map',
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'rapipdf-cli.js',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules|vfs_fonts.js/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+          },
+        }],
+      },
+    ],
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  plugins: commonPlugins,
+};
+
+module.exports = [webConfig, cliConfig];

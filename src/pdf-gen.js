@@ -1,3 +1,4 @@
+import fs from 'fs';
 import pdfMake from 'pdfmake/build/pdfmake.min';
 import pdfFonts from '@/vfs_fonts';
 // import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -50,7 +51,7 @@ export default async function createPdf(specUrl, options) {
   let apiDef = {};
 
   if (options.includeInfo) {
-    infoDef = getInfoDef(parsedSpec, options.pdfTitle, options.localize);
+    infoDef = getInfoDef(parsedSpec, options.pdfTitle, options.localize, options.window);
     allContent.push(infoDef);
   }
   if (options.includeToc) {
@@ -70,7 +71,7 @@ export default async function createPdf(specUrl, options) {
     allContent.push(securityDef);
   }
   if (options.includeApiDetails) {
-    apiDef = getApiDef(parsedSpec, '', options.pdfSchemaStyle, options.localize, options.includeExample, options.includeApiList);
+    apiDef = getApiDef(parsedSpec, '', options.pdfSchemaStyle, options.localize, options.includeExample, options.includeApiList, options.window);
     allContent.push(apiDef);
   }
   if (options.includeApiList) {
@@ -109,5 +110,12 @@ export default async function createPdf(specUrl, options) {
   };
   // pdfMake.vfs = pdfFonts.pdfMake.vfs;
   pdfMake.vfs = pdfFonts;
-  pdfMake.createPdf(finalDocDef).open();
+  const doc = pdfMake.createPdf(finalDocDef);
+  if (options.output) {
+    doc.getBuffer((buffer) => {
+      fs.writeFileSync(options.output, buffer);
+    });
+  } else {
+    doc.open();
+  }
 }

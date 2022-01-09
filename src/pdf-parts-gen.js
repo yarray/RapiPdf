@@ -8,13 +8,13 @@ import {
   objectToTableTree,
 } from '@/object-tree-gen';
 
-function markdownToPdfmake(markdown) {
+function markdownToPdfmake(markdown, window) {
   const html = marked(markdown);
-  return htmlToPdfmake(html);
+  return htmlToPdfmake(html, { window });
 }
 
 // Info Def
-export function getInfoDef(spec, bookTitle, localize) {
+export function getInfoDef(spec, bookTitle, localize, window) {
   let content;
   if (spec.info) {
     let contactDef = [];
@@ -52,7 +52,7 @@ export function getInfoDef(spec, bookTitle, localize) {
     let specInfDescrMarkDef;
     if (spec.info.description) {
       specInfDescrMarkDef = {
-        stack: markdownToPdfmake(spec.info.description),
+        stack: markdownToPdfmake(spec.info.description, window),
         style: ['topMargin3'],
       };
     } else {
@@ -344,7 +344,7 @@ function getResponseDef(responses, schemaStyle, localize, includeExample = false
 }
 
 // API details def
-export function getApiDef(spec, filterPath, schemaStyle, localize, includeExample, includeApiList) {
+export function getApiDef(spec, filterPath, schemaStyle, localize, includeExample, includeApiList, window) {
   const content = [{ text: localize.api, style: ['h2', 'b'] }];
   let tagSeq = 0;
 
@@ -372,14 +372,14 @@ export function getApiDef(spec, filterPath, schemaStyle, localize, includeExampl
       let pathSummaryMarkDef; let pathDescrMarkDef;
       if (path.summary) {
         pathSummaryMarkDef = {
-          stack: markdownToPdfmake(path.summary),
+          stack: markdownToPdfmake(path.summary, window),
           style: ['primary', 'b'],
         };
         operationContent.push(pathSummaryMarkDef);
       }
       if (path.description && path.description.trim() !== path.summary.trim()) {
         pathDescrMarkDef = {
-          stack: markdownToPdfmake(path.description),
+          stack: markdownToPdfmake(path.description, window),
         };
         operationContent.push(pathDescrMarkDef);
       }
@@ -450,7 +450,7 @@ export function getApiDef(spec, filterPath, schemaStyle, localize, includeExampl
       let tagDescrMarkDef;
       if (tag.description) {
         tagDescrMarkDef = {
-          stack: markdownToPdfmake(tag.description),
+          stack: markdownToPdfmake(tag.description, window),
           style: ['topMarginRegular'],
         };
       } else {
