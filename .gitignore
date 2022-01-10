@@ -2,6 +2,8 @@
 node_modules
 .node-version
 package-lock.json
+vfs_fonts.js  # extract vfs_fonts.js.gz locally since it is very large
+dist/
 
 # local env files
 .env.local
