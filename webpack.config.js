@@ -24,14 +24,7 @@ const commonPlugins = [
   new CleanWebpackPlugin(),
   new webpack.BannerPlugin(BANNER),
   new webpack.DefinePlugin({ VERSION }),
-  new CompressionPlugin(),
-  new FileManagerPlugin({
-    onEnd: {
-      copy: [
-        { source: 'dist/*.js', destination: 'docs' },
-      ],
-    },
-  }),
+  new CompressionPlugin()
 ];
 
 if (process.env.NODE_ENV === 'production') {
@@ -115,7 +108,13 @@ const webConfig = {
       '@': path.resolve(__dirname, 'src'),
     },
   },
-  plugins: commonPlugins,
+  plugins: commonPlugins.concat([new FileManagerPlugin({
+    onEnd: {
+      copy: [
+        { source: 'dist/*.js', destination: 'docs' },
+      ],
+    },
+  })]),
 };
 
 const cliConfig = {
