@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { DuplicatesPlugin } = require('inspectpack/plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const { web } = require('webpack');
 const VERSION = JSON.stringify(require('./package.json').version).replace(/"/g, '');
@@ -21,7 +21,7 @@ const commonPlugins = [
     maxChunks: 1,
   }),
   new HtmlWebpackPlugin({ template: 'index.html' }),
-  new CleanWebpackPlugin(),
+  //new CleanWebpackPlugin(),
   new webpack.BannerPlugin(BANNER),
   new webpack.DefinePlugin({ VERSION }),
   new CompressionPlugin()
@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const webConfig = {
+  name: 'web',
   entry: './src/index.js',
   node: { fs: 'empty' },
   externals: {
@@ -118,6 +119,7 @@ const webConfig = {
 };
 
 const cliConfig = {
+  name: 'cli',
   entry: './src/rapipdf-cli.js',
   target: 'node',
   externals: [nodeExternals()],
@@ -153,4 +155,4 @@ const cliConfig = {
   plugins: commonPlugins,
 };
 
-module.exports = [webConfig, cliConfig];
+module.exports = [cliConfig, webConfig];

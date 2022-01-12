@@ -9,7 +9,7 @@ import {
 } from '@/pdf-parts-gen';
 
 export default async function createPdf(specUrl, options) {
-  const parsedSpec = await ProcessSpec(specUrl, options.pdfSortTags);
+  const parsedSpec = await ProcessSpec(specUrl, options);
 
   const pdfStyles = {
     title: { fontSize: 32 },

@@ -45,17 +45,16 @@ function genPdf(spec, options) {
   options.pdfTagOrder = options.pdfTagOrder
     ? options.pdfTagOrder.split(',')
     : [];
-  options.pdfSortTags = options.pdfSortTags !== false;
   options.pdfTitle |= 'API Reference';
   options.pdfCoverText |= '';
   options.pdfSecurityText |= '';
   options.pdfApiText |= '';
   options.pdfSchemaStyle = options.pdfSchemaStyle === 'table' ? 'table' : 'object';
   options.pdfFooterText |= '';
-  options.includeInfo = options.includeInfo !== false;
-  options.includeToc = options.includeToc !== false;
-  options.includeSecurity = options.includeSecurity !== false;
-  options.includeApiDetails = options.includeApiDetails !== false;
+  options.includeInfo = options.includeInfo !== 'false';
+  options.includeToc = options.includeToc !== 'false';
+  options.includeSecurity = options.includeSecurity !== 'false';
+  options.includeApiDetails = options.includeApiDetails !== 'false';
   options.window = window;
 
   createPdf(spec, options);
@@ -83,7 +82,7 @@ let parser = program;
 parser.requiredOption('-i, --input <url>', 'must provide input');
 parser.requiredOption('-o, --output <path>', 'must provide output');
 for (let key in flags) {
-  parser = parser.option(`--${key}`);
+  parser = parser.option(`--${key} <${key}>`);
 }
 parser.parse();
 const yml = fs.readFileSync(parser.opts().input, {encoding: 'utf8'});
