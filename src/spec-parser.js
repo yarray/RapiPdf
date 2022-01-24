@@ -2,7 +2,17 @@
 import Swagger from 'swagger-client';
 import converter from 'swagger2openapi';
 
-export default async function ProcessSpec(specUrl, { pdfSortTags, pdfTagOrder }) {
+function nthIndex(str, pat, n) {
+  const L = str.length; let
+    i = -1;
+  while (n-- && i++ < L) {
+    i = str.indexOf(pat, i);
+    if (i < 0) break;
+  }
+  return i;
+}
+
+export default async function ProcessSpec(specUrl, { pdfSortTags, pdfTagOrder, autoTagIndex }) {
   let jsonParsedSpec;
   let convertedSpec;
   const convertOptions = { patch: true, warnOnly: true };
@@ -72,13 +82,8 @@ export default async function ProcessSpec(specUrl, { pdfSortTags, pdfTagOrder })
             tagDescr = openApiSpec.tags.find((v) => (v.name === tagText));
           }
         } else {
-          let firstWordEndIndex = path.indexOf('/', 1);
-          if (firstWordEndIndex === -1) {
-            firstWordEndIndex = (path.length - 1);
-          } else {
-            firstWordEndIndex -= 1;
-          }
-          tagText = path.substr(1, firstWordEndIndex);
+          const tokens = path.split('/').filter((t) => t.length > 0);
+          tagText = autoTagIndex > tokens.length - 1 ? tokens[tokens.length - 1] : tokens[autoTagIndex];
         }
         tagObj = tags.find((v) => v.name === tagText);
 

@@ -55,6 +55,7 @@ function genPdf(spec, options) {
   options.includeToc = options.includeToc !== 'false';
   options.includeSecurity = options.includeSecurity !== 'false';
   options.includeApiDetails = options.includeApiDetails !== 'false';
+  options.autoTagIndex = options.autoTagIndex ? parseInt(options.autoTagIndex, 10): 0;
   options.window = window;
 
   createPdf(spec, options);
@@ -64,6 +65,7 @@ const flags = {
   pdfSortTags: 'boolean',
   pdfPrimaryColor: 'string',
   pdfAlternateColor: 'string',
+  autoTagIndex: 'integer',
   pdfTitle: 'string',
   pdfCoverText: 'string',
   pdfSecurityText: 'string',

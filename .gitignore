@@ -5,6 +5,8 @@ package-lock.json
 # extract vfs_fonts.js.gz locally since it is very large
 src/vfs_fonts.js
 dist/
+docs/rapipdf-min.js
+docs/rapipdf-cli.js
 
 # local env files
 .env.local
