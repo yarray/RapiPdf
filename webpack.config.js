@@ -155,4 +155,5 @@ const cliConfig = {
   plugins: commonPlugins,
 };
 
-module.exports = [cliConfig, webConfig];
+// module.exports = [cliConfig, webConfig];
+module.exports = [cliConfig];
