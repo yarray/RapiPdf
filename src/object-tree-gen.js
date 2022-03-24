@@ -138,8 +138,9 @@ function generatePropDescription(propDescrArray, localize) {
  * @param {object} schema - Schema object from OpenAPI spec
  * @param {object} obj - recursivly pass this object to generate object notation
  * @param {number} level - contains the recursion depth
+ * @param {bool} ignoreReadOnly - whether ignore properties marked as "readOnly"
  */
-export function schemaInObjectNotation(schema, obj = {}, level = 0) {
+export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOnly = false) {
   if (!schema) {
     return;
   }
@@ -147,6 +148,9 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0) {
     obj['::description'] = schema.description ? schema.description : '';
     obj['::type'] = 'object';
     for (const key in schema.properties) {
+      if (ignoreReadOnly && schema.properties[key].readOnly) {
+        continue;
+      }
       if (schema.required && schema.required.includes(key)) {
         obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
       } else {

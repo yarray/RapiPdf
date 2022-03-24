@@ -7,6 +7,7 @@ import {
   objectToTree,
   objectToTableTree,
 } from '@/object-tree-gen';
+import { forEachMatchingSheetRuleOfElement } from 'jsdom/lib/jsdom/living/helpers/style-rules';
 
 function markdownToPdfmake(markdown, window) {
   const html = marked(markdown);
@@ -215,13 +216,17 @@ function getRequestBodyDef(requestBody, schemaStyle, localize, includeExample = 
     ];
 
     if ((contentType.includes('form') || contentType.includes('multipart-form')) && contentTypeObj.schema) {
-      formParamDef = getParameterTableDef(contentTypeObj.schema.properties, 'FORM DATA', localize);
+      const contentTypeProps = contentTypeObj.schema.properties || {};
+      for (const key in contentTypeProps) {
+        if (contentTypeProps[key].readOnly) delete contentTypeProps[key];
+      }
+      formParamDef = getParameterTableDef(contentTypeProps, 'FORM DATA', localize);
       content.push(formParamDef);
     } else if (contentType.includes('json') || contentType.includes('xml')) {
       let origSchema = requestBody.content[contentType].schema;
       if (origSchema) {
         origSchema = JSON.parse(JSON.stringify(origSchema));
-        const schemaInObjectNotaion = schemaInObjectNotation(origSchema);
+        const schemaInObjectNotaion = schemaInObjectNotation(origSchema, {}, 0, true);
 
         if (schemaStyle === 'object') {
           let treeDef;
