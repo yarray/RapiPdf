@@ -197,8 +197,10 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
         i++;
       } else if (v.type === 'array' || v.items) {
         const partialObj = [schemaInObjectNotation(v, {}, (level + 1))];
+        // TODO: the display here is not clear, with 0: {} etc.
         Object.assign(objWithAnyOfProps, partialObj);
       } else {
+        // TODO: the display here is not clear, with prop0: {} etc.
         const prop = `prop${Object.keys(objWithAnyOfProps).length}`;
         objWithAnyOfProps[prop] = `${getTypeInfo(v).typeInfoText}`;
       }
@@ -211,6 +213,7 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
     }
     return '';
   }
+  obj['::typeInfoText'] = getTypeInfo(schema).typeInfoText;
   return obj;
 }
 
@@ -348,10 +351,15 @@ export function objectToTableTree(obj, localize, allRows = [], level = 0) {
       } else {
         objType = 'object';
       }
+      let descrStack;
+      if (obj[key]['::description']) {
+        const typeAndDescr = obj[key]['::typeInfoText'].split('~|~');
+        descrStack = generatePropDescription(typeAndDescr, localize);
+      }
       const objRow = [
         { text: key, style: ['small', 'b'], margin: [leftMargin, 0, 0, 0] },
         { text: objType, style: ['small', 'mono', 'lightGray'], margin: 0 },
-        { text: '', margin: 0 },
+        { stack: ((descrStack && descrStack.length) > 0 ? descrStack : [{ text: '' }]), margin: 0 }
       ];
       allRows.push(objRow);
       if (obj[key]['::type'] === 'array') {
