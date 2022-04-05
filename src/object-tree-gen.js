@@ -194,16 +194,13 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
         const partialObj = schemaInObjectNotation(v, {}, (level + 1));
         objWithAnyOfProps[`OPTION:${i}`] = partialObj;
-        i++;
       } else if (v.type === 'array' || v.items) {
-        const partialObj = [schemaInObjectNotation(v, {}, (level + 1))];
-        // TODO: the display here is not clear, with 0: {} etc.
-        Object.assign(objWithAnyOfProps, partialObj);
+        const partialObj = schemaInObjectNotation(v, {}, (level + 1));
+        objWithAnyOfProps[`OPTION:${i}`] = partialObj;
       } else {
-        // TODO: the display here is not clear, with prop0: {} etc.
-        const prop = `prop${Object.keys(objWithAnyOfProps).length}`;
-        objWithAnyOfProps[prop] = `${getTypeInfo(v).typeInfoText}`;
+        objWithAnyOfProps[`OPTION:${i}`] = `${getTypeInfo(v).typeInfoText}`;
       }
+      i++;
     });
     obj[(schema.anyOf ? 'ANY:OF' : 'ONE:OF')] = objWithAnyOfProps;
   } else {
