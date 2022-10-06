@@ -218,7 +218,7 @@ function getRequestBodyDef(requestBody, schemaStyle, localize, includeExample = 
     if ((contentType.includes('form') || contentType.includes('multipart-form')) && contentTypeObj.schema) {
       const contentTypeProps = contentTypeObj.schema.properties || {};
       for (const key in contentTypeProps) {
-        if (contentTypeProps[key].readOnly) delete contentTypeProps[key];
+        if (contentTypeProps[key].readOnly) { contentTypeProps[key] = undefined; }
       }
       formParamDef = getParameterTableDef(contentTypeProps, 'FORM DATA', localize);
       content.push(formParamDef);

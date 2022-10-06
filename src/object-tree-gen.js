@@ -73,7 +73,7 @@ export function getTypeInfo(schema) {
       info.constrain = `max:${schema.maxLength} chars`;
     }
   }
-  info.typeInfoText = `${info.type}~|~${info.readOrWriteOnly} ${info.deprecated}~|~${info.constrain}~|~${info.default}~|~${info.allowedValues}~|~${info.pattern}~|~${info.description}`;
+  info.typeInfoText = `${info.type}~|~${info.deprecated}~|~${info.constrain}~|~${info.default}~|~${info.allowedValues}~|~${info.pattern}~|~${info.description}`;
   return info;
 }
 
@@ -152,18 +152,18 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
         continue;
       }
       if (schema.required && schema.required.includes(key)) {
-        obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
+        obj[`${key}*`] = schemaInObjectNotation(schema.properties[key], {}, (level + 1), ignoreReadOnly);
       } else {
-        obj[key] = schemaInObjectNotation(schema.properties[key], {}, (level + 1));
+        obj[key] = schemaInObjectNotation(schema.properties[key], {}, (level + 1), ignoreReadOnly);
       }
     }
     if (schema.additionalProperties) {
-      obj['KEY'] = schemaInObjectNotation(schema.additionalProperties, {}, (level + 1));
+      obj['KEY'] = schemaInObjectNotation(schema.additionalProperties, {}, (level + 1), ignoreReadOnly);
     }
   } else if (schema.items) { // If Array
     obj['::description'] = schema.description ? schema.description : '';
     obj['::type'] = 'array';
-    obj['::props'] = schemaInObjectNotation(schema.items, {}, (level + 1));
+    obj['::props'] = schemaInObjectNotation(schema.items, {}, (level + 1), ignoreReadOnly);
   } else if (schema.allOf) {
     const objWithAllProps = {};
     if (schema.allOf.length === 1 && !schema.allOf[0].properties && !schema.allOf[0].items) {
@@ -174,10 +174,10 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
     // If allOf is an array of multiple elements, then all the keys makes a single object
     schema.allOf.map((v) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
-        const partialObj = schemaInObjectNotation(v, {}, (level + 1));
+        const partialObj = schemaInObjectNotation(v, {}, (level + 1), ignoreReadOnly);
         Object.assign(objWithAllProps, partialObj);
       } else if (v.type === 'array' || v.items) {
-        const partialObj = [schemaInObjectNotation(v, {}, (level + 1))];
+        const partialObj = [schemaInObjectNotation(v, {}, (level + 1), ignoreReadOnly)];
         Object.assign(objWithAllProps, partialObj);
       } else if (v.type) {
         const prop = `prop${Object.keys(objWithAllProps).length}`;
@@ -195,10 +195,10 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
     const xxxOf = schema.anyOf ? 'anyOf' : 'oneOf';
     schema[xxxOf].map((v) => {
       if (v.type === 'object' || v.properties || v.allOf || v.anyOf || v.oneOf) {
-        const partialObj = schemaInObjectNotation(v, {}, (level + 1));
+        const partialObj = schemaInObjectNotation(v, {}, (level + 1), ignoreReadOnly);
         objWithAnyOfProps[`OPTION:${i}`] = partialObj;
       } else if (v.type === 'array' || v.items) {
-        const partialObj = schemaInObjectNotation(v, {}, (level + 1));
+        const partialObj = schemaInObjectNotation(v, {}, (level + 1), ignoreReadOnly);
         objWithAnyOfProps[`OPTION:${i}`] = partialObj;
       } else {
         objWithAnyOfProps[`OPTION:${i}`] = `${getTypeInfo(v).typeInfoText}`;
