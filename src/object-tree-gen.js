@@ -158,7 +158,7 @@ export function schemaInObjectNotation(schema, obj = {}, level = 0, ignoreReadOn
       }
     }
     if (schema.additionalProperties) {
-      obj['KEY'] = schemaInObjectNotation(schema.additionalProperties, {}, (level + 1), ignoreReadOnly);
+      obj['KEY:'] = schemaInObjectNotation(schema.additionalProperties, {}, (level + 1), ignoreReadOnly);
     }
   } else if (schema.items) { // If Array
     obj['::description'] = schema.description ? schema.description : '';
