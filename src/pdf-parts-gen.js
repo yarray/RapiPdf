@@ -127,8 +127,16 @@ function getParameterTableDef(parameters, paramType, localize, includeExample = 
       const param = parameters[i];
       if (param.schema && param.schema.properties) {
         parameters.splice(
-          i, 1,
-          ...Object.entries(param.schema.properties).map(([k, v]) => ({ required: false, schema: v, in: 'query', name: k})))
+            i,
+            1,
+            ...Object.entries(param.schema.properties).map(([k, v]) => ({
+                required: false,
+                schema: v,
+                in: 'query',
+                name: k,
+                description: v.description,
+            }))
+        );
       }
     }
   }
