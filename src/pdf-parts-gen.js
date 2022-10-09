@@ -121,6 +121,17 @@ function getParameterTableDef(parameters, paramType, localize, includeExample = 
       { text: localize.description, style: ['sub', 'b', 'alternate'] },
     ],
   ];
+  // if query, expand object keys
+  if (paramType === 'query') {
+    for (let i = 0; i < parameters.length; i++) {
+      const param = parameters[i];
+      if (param.schema && param.schema.properties) {
+        parameters.splice(
+          i, 1,
+          ...Object.entries(param.schema.properties).map(([k, v]) => ({ required: false, schema: v, in: 'query', name: k})))
+      }
+    }
+  }
   if (paramType === 'FORM DATA') {
     for (const paramName in parameters) {
       const param = parameters[paramName];
@@ -138,7 +149,9 @@ function getParameterTableDef(parameters, paramType, localize, includeExample = 
     }
   } else {
     parameters.map((param) => {
+      console.log(param);
       const paramSchema = getTypeInfo(param.schema);
+      console.log(paramSchema);
       tableContent.push([
         {
           text: [
