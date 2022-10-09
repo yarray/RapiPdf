@@ -149,9 +149,7 @@ function getParameterTableDef(parameters, paramType, localize, includeExample = 
     }
   } else {
     parameters.map((param) => {
-      console.log(param);
       const paramSchema = getTypeInfo(param.schema);
-      console.log(paramSchema);
       tableContent.push([
         {
           text: [
